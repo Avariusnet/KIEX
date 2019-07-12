@@ -1,44 +1,30 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "Statements.h"
+#include "Lexer.hpp"
 
 int main()
 {
-	// in stream
-	std::ifstream in("D:/WoW/Gitlab/ProgramingLanguage/Programming-Language/Debug/Example.kiex");
 	std::streambuf* instream = std::cin.rdbuf();
+	std::ifstream in("D:/WoW/Gitlab/ProgramingLanguage/Example.kiex");
 	std::cin.rdbuf(in.rdbuf());
-	std::vector<char> file;
-	
-	// removing useless characters
-	bool inString = false;
-	while (!std::cin.eof())
-	{
-		int character = std::cin.get();
-		if (character == 34)
-		{
-			file.push_back(character);
-			if (inString)
-				inString = false;
-			else
-				inString = true;
-		}
-		else if (!inString)
-		{
-			if (character != 32 && character != 13 && character != 10 && character != 9)
-				file.push_back(character);
-		}
-		else
-			file.push_back(character);
-	}
-	
+
+	std::string file;
+
+	while(!std::cin.eof())
+		file.push_back(std::cin.get());
+
+	Lexer::Generator gen;
+	gen.process(file);
+	Lexer::helper::dump(gen);
+
+	/*
 	// reset output location
 	for (int i = 0; i < file.size(); i++)  //input from the file in.txt
 	{
 		std::cout << file[i];
 	}
-
+	*/
 	std::getchar();
 	return 0;
 }

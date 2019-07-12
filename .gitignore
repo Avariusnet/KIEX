@@ -1,12 +1,12 @@
 ### Output and Cache Directories ###
-/External/
-/Debug/
-/Docs/
-/Release/
-/build/
-/bin/
-/out/
-/cmake-build-*/
+[Ee]xternal/
+[Dd]ebug/
+[Dd]ocs/
+[Rr]elease/
+build/
+bin/
+out/
+cmake-build-*/
 
 ### CMake ###
 CMakeCache.txt

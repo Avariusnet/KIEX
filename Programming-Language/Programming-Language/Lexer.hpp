@@ -15,14 +15,13 @@
 #include <stack>
 #include <stdexcept>
 #include <string>
-
+#include <vector>
+#include <iostream>
 
 namespace Lexer
 {
-
 	namespace details
 	{
-
 		inline bool is_whitespace(const char c)
 		{
 			return (' ' == c) || ('\n' == c) ||
@@ -91,7 +90,8 @@ namespace Lexer
 				('_' != c) &&
 				('$' != c) &&
 				('~' != c) &&
-				('\'' != c);
+				('\'' != c) &&
+				('\"' != c);
 		}
 
 		inline bool imatch(const char c1, const char c2)
@@ -177,6 +177,24 @@ namespace Lexer
 
 			s.resize(s.size() - removal_count);
 		}
+
+		inline void cleanup_escapes(const char* s)
+		{
+			typedef std::string::iterator str_itr_t;
+
+			std::size_t removal_count = 0;
+
+
+			if ('\\' == (*s))
+			{
+				switch (*s)
+				{
+				case 'n': s = reinterpret_cast<char*>('\n'); break;
+				case 'r': s = reinterpret_cast<char*>('\r'); break;
+				case 't': s = reinterpret_cast<char*>('\t'); break;
+				}
+			}
+		}
 	}
 
 	struct token
@@ -185,16 +203,17 @@ namespace Lexer
 		enum token_type
 		{
 			e_none = 0, e_error = 1, e_err_symbol = 2,
-			e_err_number = 3, e_err_string = 4, e_err_sfunc = 5,
-			e_eof = 6, e_number = 7, e_symbol = 8,
-			e_string = 9, e_assign = 10, e_shr = 11,
-			e_shl = 12, e_lte = 13, e_ne = 14,
-			e_gte = 15, e_lt = '<', e_gt = '>',
+			e_err_number = 3, e_err_string = 4, e_err_char = 5, e_err_sfunc = 6,
+			e_eof = 7, e_number = 8, e_symbol = 9,
+			e_string = 10, e_char = 11, e_assign = 12, e_shr = 13,
+			e_shl = 14, e_lte = 15, e_ne = 16,
+			e_gte = 17, e_lt = '<', e_gt = '>',
 			e_eq = '=', e_rbracket = ')', e_lbracket = '(',
 			e_rsqrbracket = ']', e_lsqrbracket = '[', e_rcrlbracket = '}',
 			e_lcrlbracket = '{', e_comma = ',', e_add = '+',
 			e_sub = '-', e_div = '/', e_mul = '*',
-			e_mod = '%', e_pow = '^', e_colon = ':'
+			e_mod = '%', e_pow = '^', e_colon = ':',
+			e_variable = 20
 		};
 
 		token()
@@ -231,6 +250,16 @@ namespace Lexer
 		}
 
 		template <typename Iterator>
+		inline token& set_varible(const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
+		{
+			type = e_variable;
+			value.assign(begin, end);
+			if (base_begin)
+				position = std::distance(base_begin, begin);
+			return *this;
+		}
+
+		template <typename Iterator>
 		inline token& set_numeric(const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
 		{
 			type = e_number;
@@ -259,13 +288,32 @@ namespace Lexer
 		}
 
 		template <typename Iterator>
+		inline token& set_char(const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
+		{
+			type = e_char;
+			value.assign(begin, end);
+			if (base_begin)
+				position = std::distance(base_begin, begin);
+			return *this;
+		}
+
+		inline token& set_char(const char* s, const std::size_t p)
+		{
+			type = e_char;
+			value = s;
+			position = p;
+			return *this;
+		}
+
+		template <typename Iterator>
 		inline token& set_error(const token_type et, const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
 		{
 			if (
 				(e_error == et) ||
 				(e_err_symbol == et) ||
 				(e_err_number == et) ||
-				(e_err_string == et)
+				(e_err_string == et) ||
+				(e_err_char == et)
 				)
 			{
 				type = e_error;
@@ -290,10 +338,12 @@ namespace Lexer
 			case e_err_symbol: return "ERROR_SYMBOL";
 			case e_err_number: return "ERROR_NUMBER";
 			case e_err_string: return "ERROR_STRING";
+			case e_err_char: return "ERROR_CHARACTER";
 			case e_eof: return "EOF";
 			case e_number: return "NUMBER";
 			case e_symbol: return "SYMBOL";
 			case e_string: return "STRING";
+			case e_char: return "CHAR";
 			case e_assign: return ":=";
 			case e_shr: return ">>";
 			case e_shl: return "<<";
@@ -317,6 +367,7 @@ namespace Lexer
 			case e_mod: return "%";
 			case e_pow: return "^";
 			case e_colon: return ":";
+			case e_variable: return "VARIABLE";
 			default: return "UNKNOWN";
 			}
 		}
@@ -327,7 +378,8 @@ namespace Lexer
 				(e_error == type) ||
 				(e_err_symbol == type) ||
 				(e_err_number == type) ||
-				(e_err_string == type)
+				(e_err_string == type) ||
+				(e_err_char == type)
 				);
 		}
 
@@ -551,9 +603,14 @@ namespace Lexer
 				scan_number();
 				return;
 			}
-			else if ('\'' == (*s_itr_))
+			else if ('\"' == (*s_itr_))
 			{
 				scan_string();
+				return;
+			}
+			else if ('\'' == (*s_itr_))
+			{
+				scan_char();
 				return;
 			}
 			else
@@ -623,7 +680,15 @@ namespace Lexer
 				++s_itr_;
 			}
 			token_t t;
-			t.set_symbol(begin, s_itr_, base_itr_);
+			std::string tempString(begin, s_itr_);
+
+			if(tempString == "byte"   || tempString == "bool"   || tempString == "int"    || tempString == "int8"  ||
+			   tempString == "int16"  || tempString == "int64"  || tempString == "uint"   || tempString == "uint8" ||
+			   tempString == "uint16" || tempString == "uint64" || tempString == "single" || tempString == "float" ||
+			   tempString == "decimal"|| tempString == "char")
+				t.set_varible(begin, s_itr_, base_itr_);
+			else
+				t.set_symbol(begin, s_itr_, base_itr_);
 			token_list_.push_back(t);
 		}
 
@@ -743,7 +808,7 @@ namespace Lexer
 				}
 				else if (!escaped)
 				{
-					if ('\'' == *s_itr_)
+					if ('\"' == *s_itr_)
 						break;
 				}
 				else if (escaped)
@@ -765,6 +830,67 @@ namespace Lexer
 				std::string parsed_string(begin, s_itr_);
 				details::cleanup_escapes(parsed_string);
 				t.set_string(parsed_string, std::distance(base_itr_, begin));
+			}
+
+			token_list_.push_back(t);
+			++s_itr_;
+
+			return;
+		}
+
+		inline void scan_char()
+		{
+			const char* begin = s_itr_ + 1;
+			token_t t;
+			if (std::distance(s_itr_, s_end_) < 2)
+			{
+				t.set_error(token::e_err_char, s_itr_, s_end_, base_itr_);
+				token_list_.push_back(t);
+				return;
+			}
+			++s_itr_;
+
+			bool escaped_found = false;
+			bool escaped = false;
+			int allowedLength = 1;
+			int i = 1;
+			while (!is_end(s_itr_))
+			{
+				if(allowedLength > allowedLength)
+					break;
+				if (!escaped && ('\\' == *s_itr_))
+				{
+					allowedLength = 2;
+					escaped_found = true;
+					escaped = true;
+					++s_itr_;
+					continue;
+				}
+				else if (!escaped)
+				{
+					if ('\'' == *s_itr_)
+						break;
+				}
+				else if (escaped)
+					escaped = false;
+				++s_itr_;
+				i++;
+			}
+
+			if (is_end(s_itr_))
+			{
+				t.set_error(token::e_err_char, begin, s_itr_, base_itr_);
+				token_list_.push_back(t);
+				return;
+			}
+
+			if (!escaped_found)
+				t.set_char(begin, s_itr_, base_itr_);
+			else
+			{
+				const char *parsed_char = s_itr_;
+				details::cleanup_escapes(parsed_char);
+				t.set_char(parsed_char, std::distance(base_itr_, begin));
 			}
 
 			token_list_.push_back(t);
@@ -1029,7 +1155,7 @@ namespace Lexer
 			for (std::size_t i = 0; i < Generator.size(); ++i)
 			{
 				Lexer::token t = Generator[i];
-				printf("Token[%02d] @ %03d  %6s  -->  '%s'\n",
+				printf("Token[%02d] @ %03d %8s  -->  '%s'\n",
 					static_cast<unsigned int>(i),
 					static_cast<unsigned int>(t.position),
 					t.to_str(t.type).c_str(),

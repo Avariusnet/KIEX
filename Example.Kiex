@@ -1,0 +1,21 @@
+int a = 0;
+char b = 'a';
+
+if(a == b)
+{
+	Print(' ');
+}
+else if(a != b)
+{
+	Print(" ");
+}
+
+void ofintset(char c)
+{
+	if(a == b) {
+		Print(' '); }
+	else if(a != b)
+	{
+		Print(" ");
+	}
+}

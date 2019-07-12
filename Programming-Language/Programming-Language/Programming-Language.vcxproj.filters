@@ -13,27 +13,13 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Key Words">
-      <UniqueIdentifier>{0d784073-272d-4c28-b0de-20729fe5adf5}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Programming-Language.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Statements.cpp">
-      <Filter>Source Files\Key Words</Filter>
-    </ClCompile>
-    <ClCompile Include="Lexer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Statements.h">
+    <ClCompile Include="Lexer.hpp">
       <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include=".gitignore" />
+    </ClCompile>
   </ItemGroup>
 </Project>
