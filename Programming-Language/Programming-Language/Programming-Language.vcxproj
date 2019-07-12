@@ -151,11 +151,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="Programming-Language.cpp" />
     <ClCompile Include="Statements.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Statements.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
