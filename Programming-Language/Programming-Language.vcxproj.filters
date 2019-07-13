@@ -21,9 +21,15 @@
     <ClCompile Include="Lexer.hpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="ASTParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AST.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ASTParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
