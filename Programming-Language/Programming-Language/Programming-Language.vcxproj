@@ -154,6 +154,9 @@
     <ClCompile Include="Lexer.hpp" />
     <ClCompile Include="Programming-Language.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AST.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

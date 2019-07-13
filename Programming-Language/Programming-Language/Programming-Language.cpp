@@ -2,11 +2,12 @@
 #include <fstream>
 #include <sstream>
 #include "Lexer.hpp"
+#include "Ast.hpp"
 
 int main()
 {
 	std::streambuf* instream = std::cin.rdbuf();
-	std::ifstream in("D:/WoW/Gitlab/ProgramingLanguage/Example.kiex");
+	std::ifstream in("D:/Projekte/ProgramingLanguage/Example.kiex");
 	std::cin.rdbuf(in.rdbuf());
 
 	std::string file;
@@ -16,6 +17,7 @@ int main()
 
 	Lexer::Generator gen;
 	gen.process(file);
+	ASTParser::Ast::Generator(gen);
 	Lexer::helper::dump(gen);
 
 	/*

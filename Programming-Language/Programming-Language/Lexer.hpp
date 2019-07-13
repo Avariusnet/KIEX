@@ -18,6 +18,47 @@
 #include <vector>
 #include <iostream>
 
+
+enum TokenType
+{
+	e_none = 0, 
+	e_error = 1,
+	e_err_symbol = 2,
+	e_err_number = 3,
+	e_err_string = 4, 
+	e_err_char = 5, 
+	e_err_sfunc = 6,
+	e_eof = 7,
+	e_number = 8, 
+	e_symbol = 9,
+	e_string = 10, 
+	e_char = 11, 
+	e_assign = 12, 
+	e_shr = 13,
+	e_shl = 14, 
+	e_lte = 15,
+	e_ne = 16,
+	e_gte = 17,
+	e_lt = '<',
+	e_gt = '>',
+	e_eq = '=',
+	e_rbracket = ')', 
+	e_lbracket = '(',
+	e_rsqrbracket = ']', 
+	e_lsqrbracket = '[', 
+	e_rcrlbracket = '}',
+	e_lcrlbracket = '{', 
+	e_comma = ',',
+	e_add = '+',
+	e_sub = '-',
+	e_div = '/', 
+	e_mul = '*',
+	e_mod = '%',
+	e_pow = '^', 
+	e_colon = ':',
+	e_variable = 20
+};
+
 namespace Lexer
 {
 	namespace details
@@ -200,21 +241,7 @@ namespace Lexer
 	struct token
 	{
 
-		enum token_type
-		{
-			e_none = 0, e_error = 1, e_err_symbol = 2,
-			e_err_number = 3, e_err_string = 4, e_err_char = 5, e_err_sfunc = 6,
-			e_eof = 7, e_number = 8, e_symbol = 9,
-			e_string = 10, e_char = 11, e_assign = 12, e_shr = 13,
-			e_shl = 14, e_lte = 15, e_ne = 16,
-			e_gte = 17, e_lt = '<', e_gt = '>',
-			e_eq = '=', e_rbracket = ')', e_lbracket = '(',
-			e_rsqrbracket = ']', e_lsqrbracket = '[', e_rcrlbracket = '}',
-			e_lcrlbracket = '{', e_comma = ',', e_add = '+',
-			e_sub = '-', e_div = '/', e_mul = '*',
-			e_mod = '%', e_pow = '^', e_colon = ':',
-			e_variable = 20
-		};
+	
 
 		token()
 			: type(e_none),
@@ -230,7 +257,7 @@ namespace Lexer
 		}
 
 		template <typename Iterator>
-		inline token& set_operator(const token_type tt, const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
+		inline token& set_operator(const TokenType tt, const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
 		{
 			type = tt;
 			value.assign(begin, end);
@@ -306,7 +333,7 @@ namespace Lexer
 		}
 
 		template <typename Iterator>
-		inline token& set_error(const token_type et, const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
+		inline token& set_error(const TokenType et, const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
 		{
 			if (
 				(e_error == et) ||
@@ -329,7 +356,7 @@ namespace Lexer
 			return *this;
 		}
 
-		static inline std::string to_str(token_type t)
+		static inline std::string to_str(TokenType t)
 		{
 			switch (t)
 			{
@@ -383,7 +410,7 @@ namespace Lexer
 				);
 		}
 
-		token_type type;
+		TokenType type;
 		std::string value;
 		std::size_t position;
 	};
@@ -420,7 +447,7 @@ namespace Lexer
 			s_itr_ = str.data();
 			s_end_ = str.data() + str.size();
 
-			eof_token_.set_operator(token_t::e_eof, s_end_, s_end_, base_itr_);
+			eof_token_.set_operator(e_eof, s_end_, s_end_, base_itr_);
 			token_list_.clear();
 
 			while (!is_end(s_itr_))
@@ -616,7 +643,7 @@ namespace Lexer
 			else
 			{
 				token_t t;
-				t.set_error(token::e_error, s_itr_, s_itr_ + 2, base_itr_);
+				t.set_error(e_error, s_itr_, s_itr_ + 2, base_itr_);
 				token_list_.push_back(t);
 				++s_itr_;
 			}
@@ -628,21 +655,21 @@ namespace Lexer
 
 			if (!is_end(s_itr_ + 1))
 			{
-				token_t::token_type ttype = token_t::e_none;
+				TokenType ttype = e_none;
 
 				char c0 = s_itr_[0];
 				char c1 = s_itr_[1];
 
-				if ((c0 == '<') && (c1 == '=')) ttype = token_t::e_lte;
-				else if ((c0 == '>') && (c1 == '=')) ttype = token_t::e_gte;
-				else if ((c0 == '<') && (c1 == '>')) ttype = token_t::e_ne;
-				else if ((c0 == '!') && (c1 == '=')) ttype = token_t::e_ne;
-				else if ((c0 == '=') && (c1 == '=')) ttype = token_t::e_eq;
-				else if ((c0 == ':') && (c1 == '=')) ttype = token_t::e_assign;
-				else if ((c0 == '<') && (c1 == '<')) ttype = token_t::e_shl;
-				else if ((c0 == '>') && (c1 == '>')) ttype = token_t::e_shr;
+				if ((c0 == '<') && (c1 == '=')) ttype = e_lte;
+				else if ((c0 == '>') && (c1 == '=')) ttype = e_gte;
+				else if ((c0 == '<') && (c1 == '>')) ttype = e_ne;
+				else if ((c0 == '!') && (c1 == '=')) ttype = e_ne;
+				else if ((c0 == '=') && (c1 == '=')) ttype = e_eq;
+				else if ((c0 == ':') && (c1 == '=')) ttype = e_assign;
+				else if ((c0 == '<') && (c1 == '<')) ttype = e_shl;
+				else if ((c0 == '>') && (c1 == '>')) ttype = e_shr;
 
-				if (token_t::e_none != ttype)
+				if (e_none != ttype)
 				{
 					t.set_operator(ttype, s_itr_, s_itr_ + 2, base_itr_);
 					token_list_.push_back(t);
@@ -652,17 +679,17 @@ namespace Lexer
 			}
 
 			if ('<' == *s_itr_)
-				t.set_operator(token_t::e_lt, s_itr_, s_itr_ + 1, base_itr_);
+				t.set_operator(e_lt, s_itr_, s_itr_ + 1, base_itr_);
 			else if ('>' == *s_itr_)
-				t.set_operator(token_t::e_gt, s_itr_, s_itr_ + 1, base_itr_);
+				t.set_operator(e_gt, s_itr_, s_itr_ + 1, base_itr_);
 			else if (';' == *s_itr_)
-				t.set_operator(token_t::e_eof, s_itr_, s_itr_ + 1, base_itr_);
+				t.set_operator(e_eof, s_itr_, s_itr_ + 1, base_itr_);
 			else if ('&' == *s_itr_)
 				t.set_symbol(s_itr_, s_itr_ + 1, base_itr_);
 			else if ('|' == *s_itr_)
 				t.set_symbol(s_itr_, s_itr_ + 1, base_itr_);
 			else
-				t.set_operator(token_t::token_type(*s_itr_), s_itr_, s_itr_ + 1, base_itr_);
+				t.set_operator(TokenType(*s_itr_), s_itr_, s_itr_ + 1, base_itr_);
 
 			token_list_.push_back(t);
 
@@ -718,7 +745,7 @@ namespace Lexer
 				{
 					if (dot_found)
 					{
-						t.set_error(token::e_err_number, begin, s_itr_, base_itr_);
+						t.set_error(e_err_number, begin, s_itr_, base_itr_);
 						token_list_.push_back(t);
 						return;
 					}
@@ -732,7 +759,7 @@ namespace Lexer
 
 					if (is_end(s_itr_ + 1))
 					{
-						t.set_error(token::e_err_number, begin, s_itr_, base_itr_);
+						t.set_error(e_err_number, begin, s_itr_, base_itr_);
 						token_list_.push_back(t);
 						return;
 					}
@@ -742,7 +769,7 @@ namespace Lexer
 						!details::is_digit(c)
 						)
 					{
-						t.set_error(token::e_err_number, begin, s_itr_, base_itr_);
+						t.set_error(e_err_number, begin, s_itr_, base_itr_);
 						token_list_.push_back(t);
 						return;
 					}
@@ -755,7 +782,7 @@ namespace Lexer
 				{
 					if (post_e_sign_found)
 					{
-						t.set_error(token::e_err_number, begin, s_itr_, base_itr_);
+						t.set_error(e_err_number, begin, s_itr_, base_itr_);
 						token_list_.push_back(t);
 						return;
 					}
@@ -788,7 +815,7 @@ namespace Lexer
 			token_t t;
 			if (std::distance(s_itr_, s_end_) < 2)
 			{
-				t.set_error(token::e_err_string, s_itr_, s_end_, base_itr_);
+				t.set_error(e_err_string, s_itr_, s_end_, base_itr_);
 				token_list_.push_back(t);
 				return;
 			}
@@ -818,7 +845,7 @@ namespace Lexer
 
 			if (is_end(s_itr_))
 			{
-				t.set_error(token::e_err_string, begin, s_itr_, base_itr_);
+				t.set_error(e_err_string, begin, s_itr_, base_itr_);
 				token_list_.push_back(t);
 				return;
 			}
@@ -844,7 +871,7 @@ namespace Lexer
 			token_t t;
 			if (std::distance(s_itr_, s_end_) < 2)
 			{
-				t.set_error(token::e_err_char, s_itr_, s_end_, base_itr_);
+				t.set_error(e_err_char, s_itr_, s_end_, base_itr_);
 				token_list_.push_back(t);
 				return;
 			}
@@ -879,7 +906,7 @@ namespace Lexer
 
 			if (is_end(s_itr_))
 			{
-				t.set_error(token::e_err_char, begin, s_itr_, base_itr_);
+				t.set_error(e_err_char, begin, s_itr_, base_itr_);
 				token_list_.push_back(t);
 				return;
 			}
@@ -1178,12 +1205,12 @@ namespace Lexer
 
 			inline int insert(const Lexer::token& t0, const Lexer::token& t1, Lexer::token& new_token)
 			{
-				new_token.type = Lexer::token::e_mul;
+				new_token.type = e_mul;
 				new_token.value = "*";
 				new_token.position = t1.position;
 				bool match = false;
 
-				if (t0.type == Lexer::token::e_symbol)
+				if (t0.type == e_symbol)
 				{
 					if (ignore_set_.end() != ignore_set_.find(t0.value))
 					{
@@ -1195,7 +1222,7 @@ namespace Lexer
 					}
 				}
 
-				if (t1.type == Lexer::token::e_symbol)
+				if (t1.type == e_symbol)
 				{
 					if (ignore_set_.end() != ignore_set_.find(t1.value))
 					{
@@ -1203,17 +1230,17 @@ namespace Lexer
 					}
 				}
 
-				if ((t0.type == Lexer::token::e_number) && (t1.type == Lexer::token::e_symbol)) match = true;
-				else if ((t0.type == Lexer::token::e_number) && (t1.type == Lexer::token::e_lbracket)) match = true;
-				else if ((t0.type == Lexer::token::e_number) && (t1.type == Lexer::token::e_lcrlbracket)) match = true;
-				else if ((t0.type == Lexer::token::e_number) && (t1.type == Lexer::token::e_lsqrbracket)) match = true;
-				else if ((t0.type == Lexer::token::e_symbol) && (t1.type == Lexer::token::e_number)) match = true;
-				else if ((t0.type == Lexer::token::e_rbracket) && (t1.type == Lexer::token::e_number)) match = true;
-				else if ((t0.type == Lexer::token::e_rcrlbracket) && (t1.type == Lexer::token::e_number)) match = true;
-				else if ((t0.type == Lexer::token::e_rsqrbracket) && (t1.type == Lexer::token::e_number)) match = true;
-				else if ((t0.type == Lexer::token::e_rbracket) && (t1.type == Lexer::token::e_symbol)) match = true;
-				else if ((t0.type == Lexer::token::e_rcrlbracket) && (t1.type == Lexer::token::e_symbol)) match = true;
-				else if ((t0.type == Lexer::token::e_rsqrbracket) && (t1.type == Lexer::token::e_symbol)) match = true;
+				if ((t0.type == e_number) && (t1.type == e_symbol)) match = true;
+				else if ((t0.type == e_number) && (t1.type == e_lbracket)) match = true;
+				else if ((t0.type == e_number) && (t1.type == e_lcrlbracket)) match = true;
+				else if ((t0.type == e_number) && (t1.type == e_lsqrbracket)) match = true;
+				else if ((t0.type == e_symbol) && (t1.type == e_number)) match = true;
+				else if ((t0.type == e_rbracket) && (t1.type == e_number)) match = true;
+				else if ((t0.type == e_rcrlbracket) && (t1.type == e_number)) match = true;
+				else if ((t0.type == e_rsqrbracket) && (t1.type == e_number)) match = true;
+				else if ((t0.type == e_rbracket) && (t1.type == e_symbol)) match = true;
+				else if ((t0.type == e_rcrlbracket) && (t1.type == e_symbol)) match = true;
+				else if ((t0.type == e_rsqrbracket) && (t1.type == e_symbol)) match = true;
 
 				return (match) ? 1 : -1;
 			}
@@ -1230,49 +1257,49 @@ namespace Lexer
 			inline bool join(const Lexer::token& t0, const Lexer::token& t1, Lexer::token& t)
 			{
 				//': =' --> ':='
-				if ((t0.type == Lexer::token::e_colon) && (t1.type == Lexer::token::e_eq))
+				if ((t0.type == e_colon) && (t1.type == e_eq))
 				{
-					t.type = Lexer::token::e_assign;
+					t.type = e_assign;
 					t.value = ":=";
 					t.position = t0.position;
 					return true;
 				}
 				//'> =' --> '>='
-				else if ((t0.type == Lexer::token::e_gt) && (t1.type == Lexer::token::e_eq))
+				else if ((t0.type == e_gt) && (t1.type == e_eq))
 				{
-					t.type = Lexer::token::e_gte;
+					t.type = e_gte;
 					t.value = ">=";
 					t.position = t0.position;
 					return true;
 				}
 				//'< =' --> '<='
-				else if ((t0.type == Lexer::token::e_lt) && (t1.type == Lexer::token::e_eq))
+				else if ((t0.type == e_lt) && (t1.type == e_eq))
 				{
-					t.type = Lexer::token::e_lte;
+					t.type = e_lte;
 					t.value = "<=";
 					t.position = t0.position;
 					return true;
 				}
 				//'= =' --> '=='
-				else if ((t0.type == Lexer::token::e_eq) && (t1.type == Lexer::token::e_eq))
+				else if ((t0.type == e_eq) && (t1.type == e_eq))
 				{
-					t.type = Lexer::token::e_eq;
+					t.type = e_eq;
 					t.value = "==";
 					t.position = t0.position;
 					return true;
 				}
 				//'! =' --> '!='
-				else if ((static_cast<char>(t0.type) == '!') && (t1.type == Lexer::token::e_eq))
+				else if ((static_cast<char>(t0.type) == '!') && (t1.type == e_eq))
 				{
-					t.type = Lexer::token::e_ne;
+					t.type = e_ne;
 					t.value = "!=";
 					t.position = t0.position;
 					return true;
 				}
 				//'< >' --> '<>'
-				else if ((t0.type == Lexer::token::e_lt) && (t1.type == Lexer::token::e_gt))
+				else if ((t0.type == e_lt) && (t1.type == e_gt))
 				{
-					t.type = Lexer::token::e_ne;
+					t.type = e_ne;
 					t.value = "<>";
 					t.position = t0.position;
 					return true;
@@ -1312,16 +1339,16 @@ namespace Lexer
 			bool operator()(const Lexer::token& t)
 			{
 				if (!t.value.empty() &&
-					(Lexer::token::e_string != t.type) &&
-					(Lexer::token::e_symbol != t.type) &&
+					(e_string != t.type) &&
+					(e_symbol != t.type) &&
 					details::is_bracket(t.value[0])
 					)
 				{
 					char c = t.value[0];
 
-					if (t.type == Lexer::token::e_lbracket)    stack_.push(')');
-					else if (t.type == Lexer::token::e_lcrlbracket) stack_.push('}');
-					else if (t.type == Lexer::token::e_lsqrbracket) stack_.push(']');
+					if (t.type == e_lbracket)    stack_.push(')');
+					else if (t.type == e_lcrlbracket) stack_.push('}');
+					else if (t.type == e_lsqrbracket) stack_.push(']');
 					else if (details::is_right_bracket(c))
 					{
 						if (stack_.empty())
@@ -1355,7 +1382,7 @@ namespace Lexer
 		{
 		private:
 
-			typedef std::map<std::string, std::pair<std::string, token::token_type>, details::ilesscompare> replace_map_t;
+			typedef std::map<std::string, std::pair<std::string, TokenType>, details::ilesscompare> replace_map_t;
 
 		public:
 
@@ -1373,7 +1400,7 @@ namespace Lexer
 
 			bool add_replace(const std::string& target_symbol,
 				const std::string& replace_symbol,
-				const Lexer::token::token_type token_type = Lexer::token::e_symbol)
+				const TokenType token_type = e_symbol)
 			{
 				replace_map_t::iterator itr = replace_map_.find(target_symbol);
 
@@ -1396,7 +1423,7 @@ namespace Lexer
 
 			bool modify(Lexer::token& t)
 			{
-				if (Lexer::token::e_symbol == t.type)
+				if (e_symbol == t.type)
 				{
 					if (replace_map_.empty())
 						return false;
@@ -1421,7 +1448,7 @@ namespace Lexer
 		{
 		private:
 
-			typedef std::pair<Lexer::token::token_type, Lexer::token::token_type> token_pair_t;
+			typedef std::pair<TokenType, TokenType> token_pair_t;
 			typedef std::set<token_pair_t> set_t;
 
 		public:
@@ -1429,29 +1456,29 @@ namespace Lexer
 			sequence_validator()
 				: Lexer::token_scanner(2)
 			{
-				add_invalid(Lexer::token::e_number, Lexer::token::e_number);
-				add_invalid(Lexer::token::e_string, Lexer::token::e_string);
-				add_invalid(Lexer::token::e_number, Lexer::token::e_string);
-				add_invalid(Lexer::token::e_string, Lexer::token::e_number);
-				add_invalid(Lexer::token::e_string, Lexer::token::e_colon);
-				add_invalid(Lexer::token::e_colon, Lexer::token::e_string);
-				add_invalid_set1(Lexer::token::e_assign);
-				add_invalid_set1(Lexer::token::e_shr);
-				add_invalid_set1(Lexer::token::e_shl);
-				add_invalid_set1(Lexer::token::e_lte);
-				add_invalid_set1(Lexer::token::e_ne);
-				add_invalid_set1(Lexer::token::e_gte);
-				add_invalid_set1(Lexer::token::e_lt);
-				add_invalid_set1(Lexer::token::e_gt);
-				add_invalid_set1(Lexer::token::e_eq);
-				add_invalid_set1(Lexer::token::e_comma);
-				add_invalid_set1(Lexer::token::e_add);
-				add_invalid_set1(Lexer::token::e_sub);
-				add_invalid_set1(Lexer::token::e_div);
-				add_invalid_set1(Lexer::token::e_mul);
-				add_invalid_set1(Lexer::token::e_mod);
-				add_invalid_set1(Lexer::token::e_pow);
-				add_invalid_set1(Lexer::token::e_colon);
+				add_invalid(e_number, e_number);
+				add_invalid(e_string, e_string);
+				add_invalid(e_number, e_string);
+				add_invalid(e_string, e_number);
+				add_invalid(e_string, e_colon);
+				add_invalid(e_colon, e_string);
+				add_invalid_set1(e_assign);
+				add_invalid_set1(e_shr);
+				add_invalid_set1(e_shl);
+				add_invalid_set1(e_lte);
+				add_invalid_set1(e_ne);
+				add_invalid_set1(e_gte);
+				add_invalid_set1(e_lt);
+				add_invalid_set1(e_gt);
+				add_invalid_set1(e_eq);
+				add_invalid_set1(e_comma);
+				add_invalid_set1(e_add);
+				add_invalid_set1(e_sub);
+				add_invalid_set1(e_div);
+				add_invalid_set1(e_mul);
+				add_invalid_set1(e_mod);
+				add_invalid_set1(e_pow);
+				add_invalid_set1(e_colon);
 			}
 
 			bool result()
@@ -1498,38 +1525,38 @@ namespace Lexer
 
 		private:
 
-			void add_invalid(Lexer::token::token_type base, Lexer::token::token_type t)
+			void add_invalid(TokenType base, TokenType t)
 			{
 				invalid_comb_.insert(std::make_pair(base, t));
 			}
 
-			void add_invalid_set1(Lexer::token::token_type t)
+			void add_invalid_set1(TokenType t)
 			{
-				add_invalid(t, Lexer::token::e_assign);
-				add_invalid(t, Lexer::token::e_shr);
-				add_invalid(t, Lexer::token::e_shl);
-				add_invalid(t, Lexer::token::e_lte);
-				add_invalid(t, Lexer::token::e_ne);
-				add_invalid(t, Lexer::token::e_gte);
-				add_invalid(t, Lexer::token::e_lt);
-				add_invalid(t, Lexer::token::e_gt);
-				add_invalid(t, Lexer::token::e_eq);
-				add_invalid(t, Lexer::token::e_comma);
-				add_invalid(t, Lexer::token::e_div);
-				add_invalid(t, Lexer::token::e_mul);
-				add_invalid(t, Lexer::token::e_mod);
-				add_invalid(t, Lexer::token::e_pow);
-				add_invalid(t, Lexer::token::e_colon);
+				add_invalid(t, e_assign);
+				add_invalid(t, e_shr);
+				add_invalid(t, e_shl);
+				add_invalid(t, e_lte);
+				add_invalid(t, e_ne);
+				add_invalid(t, e_gte);
+				add_invalid(t, e_lt);
+				add_invalid(t, e_gt);
+				add_invalid(t, e_eq);
+				add_invalid(t, e_comma);
+				add_invalid(t, e_div);
+				add_invalid(t, e_mul);
+				add_invalid(t, e_mod);
+				add_invalid(t, e_pow);
+				add_invalid(t, e_colon);
 			}
 
-			bool invalid_bracket_check(Lexer::token::token_type base, Lexer::token::token_type t)
+			bool invalid_bracket_check(TokenType base, TokenType t)
 			{
 				if (details::is_right_bracket(static_cast<char>(base)))
 				{
 					switch (t)
 					{
-					case Lexer::token::e_string: return true;
-					case Lexer::token::e_assign: return true;
+					case e_string: return true;
+					case e_assign: return true;
 					default: return false;
 					}
 				}
@@ -1543,12 +1570,12 @@ namespace Lexer
 					{
 						switch (t)
 						{
-						case Lexer::token::e_number: return false;
-						case Lexer::token::e_symbol: return false;
-						case Lexer::token::e_string: return false;
-						case Lexer::token::e_add: return false;
-						case Lexer::token::e_sub: return false;
-						case Lexer::token::e_colon: return false;
+						case e_number: return false;
+						case e_symbol: return false;
+						case e_string: return false;
+						case e_add: return false;
+						case e_sub: return false;
+						case e_colon: return false;
 						default: return true;
 						}
 					}
@@ -1557,11 +1584,11 @@ namespace Lexer
 				{
 					switch (base)
 					{
-					case Lexer::token::e_number: return false;
-					case Lexer::token::e_symbol: return false;
-					case Lexer::token::e_string: return false;
-					case Lexer::token::e_eof: return false;
-					case Lexer::token::e_colon: return false;
+					case e_number: return false;
+					case e_symbol: return false;
+					case e_string: return false;
+					case e_eof: return false;
+					case e_colon: return false;
 					default: return true;
 					}
 				}
@@ -1569,9 +1596,9 @@ namespace Lexer
 				{
 					switch (base)
 					{
-					case Lexer::token::e_rbracket: return true;
-					case Lexer::token::e_rsqrbracket: return true;
-					case Lexer::token::e_rcrlbracket: return true;
+					case e_rbracket: return true;
+					case e_rsqrbracket: return true;
+					case e_rcrlbracket: return true;
 					default: return false;
 					}
 				}
@@ -1795,7 +1822,7 @@ namespace Lexer
 			}
 		}
 
-		inline bool token_is(const token_t::token_type& ttype, const token_advance_mode mode = e_advance)
+		inline bool token_is(const TokenType& ttype, const token_advance_mode mode = e_advance)
 		{
 			if (current_token().type != ttype)
 			{
@@ -1807,7 +1834,7 @@ namespace Lexer
 			return true;
 		}
 
-		inline bool token_is(const token_t::token_type& ttype,
+		inline bool token_is(const TokenType& ttype,
 			const std::string& value,
 			const token_advance_mode mode = e_advance)
 		{
@@ -1824,7 +1851,7 @@ namespace Lexer
 			return true;
 		}
 
-		inline bool token_is_then_assign(const token_t::token_type& ttype,
+		inline bool token_is_then_assign(const TokenType& ttype,
 			std::string& token,
 			const token_advance_mode mode = e_advance)
 		{
@@ -1842,7 +1869,7 @@ namespace Lexer
 
 		template <typename Allocator,
 			template <typename, typename> class Container>
-		inline bool token_is_then_assign(const token_t::token_type& ttype,
+		inline bool token_is_then_assign(const TokenType& ttype,
 			Container<std::string, Allocator>& token_list,
 			const token_advance_mode mode = e_advance)
 		{
@@ -1858,7 +1885,7 @@ namespace Lexer
 			return true;
 		}
 
-		inline bool peek_token_is(const token_t::token_type& ttype)
+		inline bool peek_token_is(const TokenType& ttype)
 		{
 			return (lexer_.peek_next_token().type == ttype);
 		}

@@ -1,3 +1,5 @@
+int test = 1+2*4;
+
 int a = 0;
 char b = 'a';
 
