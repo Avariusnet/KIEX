@@ -7,7 +7,7 @@ build/
 bin/
 out/
 cmake-build-*/
-
+.vs/*
 ### CMake ###
 CMakeCache.txt
 CMakeFiles
