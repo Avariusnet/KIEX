@@ -387,10 +387,10 @@ namespace Lexer
 			case e_rcrlbracket: return "}";
 			case e_lcrlbracket: return "{";
 			case e_comma: return ",";
-			case e_add: return "+";
-			case e_sub: return "-";
-			case e_div: return "/";
-			case e_mul: return "*";
+			case e_add:
+			case e_sub:
+			case e_div:
+			case e_mul: return "OPERAND";
 			case e_mod: return "%";
 			case e_pow: return "^";
 			case e_colon: return ":";
