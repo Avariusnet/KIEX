@@ -21,42 +21,42 @@
 
 enum TokenType
 {
-	e_none = 0, 
-	e_error = 1,
-	e_err_symbol = 2,
-	e_err_number = 3,
-	e_err_string = 4, 
-	e_err_char = 5, 
-	e_err_sfunc = 6,
-	e_eof = 7,
-	e_number = 8, 
-	e_symbol = 9,
-	e_string = 10, 
-	e_char = 11, 
-	e_assign = 12, 
-	e_shr = 13,
-	e_shl = 14, 
-	e_lte = 15,
-	e_ne = 16,
-	e_gte = 17,
-	e_lt = '<',
-	e_gt = '>',
-	e_eq = '=',
-	e_rbracket = ')', 
-	e_lbracket = '(',
-	e_rsqrbracket = ']', 
-	e_lsqrbracket = '[', 
-	e_rcrlbracket = '}',
-	e_lcrlbracket = '{', 
-	e_comma = ',',
-	e_add = '+',
-	e_sub = '-',
-	e_div = '/', 
-	e_mul = '*',
-	e_mod = '%',
-	e_pow = '^', 
-	e_colon = ':',
-	e_variable = 20
+	TOKEN_NONE = 0, 
+	TOKEN_ERROR = 1,
+	TOKEN_ERR_SYMBOL = 2,
+	TOKEN_ERR_NUMBER = 3,
+	TOKEN_ERR_STRING = 4,
+	TOKEN_ERR_CHAR = 5,
+	TOKEN_ERR_SFUNC = 6,
+	TOKEN_EOF = 7,
+	TOKEN_NUMBER = 8,
+	TOKEN_SYMBOL = 9,
+	TOKEN_STRING = 10,
+	TOKEN_CHAR = 11,
+	TOKEN_ASSIGN = 12,
+	TOKEN_SHR = 13,
+	TOKEN_SHL = 14,
+	TOKEN_LTE = 15,
+	TOKEN_NE = 16,
+	TOKEN_GTE = 17,
+	TOKEN_LT = '<',
+	TOKEN_GT = '>',
+	TOKEN_EQ = '=',
+	TOKEN_RBRACKET = ')',
+	TOKEN_LBRACKET = '(',
+	TOKEN_RSQRBRACKET = ']',
+	TOKEN_LSQRBRACKET = '[',
+	TOKEN_RCRLBRACKET = '}',
+	TOKEN_LCRLBRACKET = '{',
+	TOKEN_COMMA = ',',
+	TOKEN_ADD = '+',
+	TOKEN_SUB = '-',
+	TOKEN_DIV = '/',
+	TOKEN_MUL = '*',
+	TOKEN_MOD = '%',
+	TOKEN_POW = '^',
+	TOKEN_COLON = ':',
+	TOKEN_VARIABLE = 20
 };
 
 namespace Lexer
@@ -244,14 +244,14 @@ namespace Lexer
 	
 
 		token()
-			: type(e_none),
+			: type(TOKEN_NONE),
 			value(""),
 			position(std::numeric_limits<std::size_t>::max())
 		{}
 
 		void clear()
 		{
-			type = e_none;
+			type = TOKEN_NONE;
 			value = "";
 			position = std::numeric_limits<std::size_t>::max();
 		}
@@ -269,7 +269,7 @@ namespace Lexer
 		template <typename Iterator>
 		inline token& set_symbol(const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
 		{
-			type = e_symbol;
+			type = TOKEN_SYMBOL;
 			value.assign(begin, end);
 			if (base_begin)
 				position = std::distance(base_begin, begin);
@@ -279,7 +279,7 @@ namespace Lexer
 		template <typename Iterator>
 		inline token& set_varible(const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
 		{
-			type = e_variable;
+			type = TOKEN_VARIABLE;
 			value.assign(begin, end);
 			if (base_begin)
 				position = std::distance(base_begin, begin);
@@ -289,7 +289,7 @@ namespace Lexer
 		template <typename Iterator>
 		inline token& set_numeric(const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
 		{
-			type = e_number;
+			type = TOKEN_NUMBER;
 			value.assign(begin, end);
 			if (base_begin)
 				position = std::distance(base_begin, begin);
@@ -299,7 +299,7 @@ namespace Lexer
 		template <typename Iterator>
 		inline token& set_string(const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
 		{
-			type = e_string;
+			type = TOKEN_STRING;
 			value.assign(begin, end);
 			if (base_begin)
 				position = std::distance(base_begin, begin);
@@ -308,7 +308,7 @@ namespace Lexer
 
 		inline token& set_string(const std::string& s, const std::size_t p)
 		{
-			type = e_string;
+			type = TOKEN_STRING;
 			value = s;
 			position = p;
 			return *this;
@@ -317,7 +317,7 @@ namespace Lexer
 		template <typename Iterator>
 		inline token& set_char(const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
 		{
-			type = e_char;
+			type = TOKEN_CHAR;
 			value.assign(begin, end);
 			if (base_begin)
 				position = std::distance(base_begin, begin);
@@ -326,7 +326,7 @@ namespace Lexer
 
 		inline token& set_char(const char* s, const std::size_t p)
 		{
-			type = e_char;
+			type = TOKEN_CHAR;
 			value = s;
 			position = p;
 			return *this;
@@ -336,17 +336,17 @@ namespace Lexer
 		inline token& set_error(const TokenType et, const Iterator begin, const Iterator end, const Iterator base_begin = Iterator(0))
 		{
 			if (
-				(e_error == et) ||
-				(e_err_symbol == et) ||
-				(e_err_number == et) ||
-				(e_err_string == et) ||
-				(e_err_char == et)
+				(TOKEN_ERROR == et) ||
+				(TOKEN_ERR_SYMBOL == et) ||
+				(TOKEN_ERR_NUMBER == et) ||
+				(TOKEN_ERR_STRING == et) ||
+				(TOKEN_ERR_CHAR == et)
 				)
 			{
-				type = e_error;
+				type = TOKEN_ERROR;
 			}
 			else
-				type = e_error;
+				type = TOKEN_ERROR;
 
 			value.assign(begin, end);
 
@@ -360,41 +360,41 @@ namespace Lexer
 		{
 			switch (t)
 			{
-			case e_none: return "NONE";
-			case e_error: return "ERROR";
-			case e_err_symbol: return "ERROR_SYMBOL";
-			case e_err_number: return "ERROR_NUMBER";
-			case e_err_string: return "ERROR_STRING";
-			case e_err_char: return "ERROR_CHARACTER";
-			case e_eof: return "EOF";
-			case e_number: return "NUMBER";
-			case e_symbol: return "SYMBOL";
-			case e_string: return "STRING";
-			case e_char: return "CHAR";
-			case e_assign: return ":=";
-			case e_shr: return ">>";
-			case e_shl: return "<<";
-			case e_lte: return "<=";
-			case e_ne: return "!=";
-			case e_gte: return ">=";
-			case e_lt: return "<";
-			case e_gt: return ">";
-			case e_eq: return "=";
-			case e_rbracket: return ")";
-			case e_lbracket: return "(";
-			case e_rsqrbracket: return "]";
-			case e_lsqrbracket: return "[";
-			case e_rcrlbracket: return "}";
-			case e_lcrlbracket: return "{";
-			case e_comma: return ",";
-			case e_add:
-			case e_sub:
-			case e_div:
-			case e_mul: return "OPERAND";
-			case e_mod: return "%";
-			case e_pow: return "^";
-			case e_colon: return ":";
-			case e_variable: return "VARIABLE";
+			case TOKEN_NONE: return "NONE";
+			case TOKEN_ERROR: return "ERROR";
+			case TOKEN_ERR_SYMBOL: return "ERROR_SYMBOL";
+			case TOKEN_ERR_NUMBER: return "ERROR_NUMBER";
+			case TOKEN_ERR_STRING: return "ERROR_STRING";
+			case TOKEN_ERR_CHAR: return "ERROR_CHARACTER";
+			case TOKEN_EOF: return "EOF";
+			case TOKEN_NUMBER: return "NUMBER";
+			case TOKEN_SYMBOL: return "SYMBOL";
+			case TOKEN_STRING: return "STRING";
+			case TOKEN_CHAR: return "CHAR";
+			case TOKEN_ASSIGN: return ":=";
+			case TOKEN_SHR: return ">>";
+			case TOKEN_SHL: return "<<";
+			case TOKEN_LTE: return "<=";
+			case TOKEN_NE: return "!=";
+			case TOKEN_GTE: return ">=";
+			case TOKEN_LT: return "<";
+			case TOKEN_GT: return ">";
+			case TOKEN_EQ: return "=";
+			case TOKEN_RBRACKET: return ")";
+			case TOKEN_LBRACKET: return "(";
+			case TOKEN_RSQRBRACKET: return "]";
+			case TOKEN_LSQRBRACKET: return "[";
+			case TOKEN_RCRLBRACKET: return "}";
+			case TOKEN_LCRLBRACKET: return "{";
+			case TOKEN_COMMA: return ",";
+			case TOKEN_ADD:
+			case TOKEN_SUB:
+			case TOKEN_DIV:
+			case TOKEN_MUL: return "OPERAND";
+			case TOKEN_MOD: return "%";
+			case TOKEN_POW: return "^";
+			case TOKEN_COLON: return ":";
+			case TOKEN_VARIABLE: return "VARIABLE";
 			default: return "UNKNOWN";
 			}
 		}
@@ -402,11 +402,11 @@ namespace Lexer
 		inline bool is_error() const
 		{
 			return (
-				(e_error == type) ||
-				(e_err_symbol == type) ||
-				(e_err_number == type) ||
-				(e_err_string == type) ||
-				(e_err_char == type)
+				(TOKEN_ERROR == type) ||
+				(TOKEN_ERR_SYMBOL == type) ||
+				(TOKEN_ERR_NUMBER == type) ||
+				(TOKEN_ERR_STRING == type) ||
+				(TOKEN_ERR_CHAR == type)
 				);
 		}
 
@@ -447,7 +447,7 @@ namespace Lexer
 			s_itr_ = str.data();
 			s_end_ = str.data() + str.size();
 
-			eof_token_.set_operator(e_eof, s_end_, s_end_, base_itr_);
+			eof_token_.set_operator(TOKEN_EOF, s_end_, s_end_, base_itr_);
 			token_list_.clear();
 
 			while (!is_end(s_itr_))
@@ -643,7 +643,7 @@ namespace Lexer
 			else
 			{
 				token_t t;
-				t.set_error(e_error, s_itr_, s_itr_ + 2, base_itr_);
+				t.set_error(TOKEN_ERROR, s_itr_, s_itr_ + 2, base_itr_);
 				token_list_.push_back(t);
 				++s_itr_;
 			}
@@ -655,21 +655,21 @@ namespace Lexer
 
 			if (!is_end(s_itr_ + 1))
 			{
-				TokenType ttype = e_none;
+				TokenType ttype = TOKEN_NONE;
 
 				char c0 = s_itr_[0];
 				char c1 = s_itr_[1];
 
-				if ((c0 == '<') && (c1 == '=')) ttype = e_lte;
-				else if ((c0 == '>') && (c1 == '=')) ttype = e_gte;
-				else if ((c0 == '<') && (c1 == '>')) ttype = e_ne;
-				else if ((c0 == '!') && (c1 == '=')) ttype = e_ne;
-				else if ((c0 == '=') && (c1 == '=')) ttype = e_eq;
-				else if ((c0 == ':') && (c1 == '=')) ttype = e_assign;
-				else if ((c0 == '<') && (c1 == '<')) ttype = e_shl;
-				else if ((c0 == '>') && (c1 == '>')) ttype = e_shr;
+				if ((c0 == '<') && (c1 == '=')) ttype = TOKEN_LTE;
+				else if ((c0 == '>') && (c1 == '=')) ttype = TOKEN_GTE;
+				else if ((c0 == '<') && (c1 == '>')) ttype = TOKEN_NE;
+				else if ((c0 == '!') && (c1 == '=')) ttype = TOKEN_NE;
+				else if ((c0 == '=') && (c1 == '=')) ttype = TOKEN_EQ;
+				else if ((c0 == ':') && (c1 == '=')) ttype = TOKEN_ASSIGN;
+				else if ((c0 == '<') && (c1 == '<')) ttype = TOKEN_SHL;
+				else if ((c0 == '>') && (c1 == '>')) ttype = TOKEN_SHR;
 
-				if (e_none != ttype)
+				if (TOKEN_NONE != ttype)
 				{
 					t.set_operator(ttype, s_itr_, s_itr_ + 2, base_itr_);
 					token_list_.push_back(t);
@@ -679,11 +679,11 @@ namespace Lexer
 			}
 
 			if ('<' == *s_itr_)
-				t.set_operator(e_lt, s_itr_, s_itr_ + 1, base_itr_);
+				t.set_operator(TOKEN_LT, s_itr_, s_itr_ + 1, base_itr_);
 			else if ('>' == *s_itr_)
-				t.set_operator(e_gt, s_itr_, s_itr_ + 1, base_itr_);
+				t.set_operator(TOKEN_GT, s_itr_, s_itr_ + 1, base_itr_);
 			else if (';' == *s_itr_)
-				t.set_operator(e_eof, s_itr_, s_itr_ + 1, base_itr_);
+				t.set_operator(TOKEN_EOF, s_itr_, s_itr_ + 1, base_itr_);
 			else if ('&' == *s_itr_)
 				t.set_symbol(s_itr_, s_itr_ + 1, base_itr_);
 			else if ('|' == *s_itr_)
@@ -745,7 +745,7 @@ namespace Lexer
 				{
 					if (dot_found)
 					{
-						t.set_error(e_err_number, begin, s_itr_, base_itr_);
+						t.set_error(TOKEN_ERR_NUMBER, begin, s_itr_, base_itr_);
 						token_list_.push_back(t);
 						return;
 					}
@@ -759,7 +759,7 @@ namespace Lexer
 
 					if (is_end(s_itr_ + 1))
 					{
-						t.set_error(e_err_number, begin, s_itr_, base_itr_);
+						t.set_error(TOKEN_ERR_NUMBER, begin, s_itr_, base_itr_);
 						token_list_.push_back(t);
 						return;
 					}
@@ -769,7 +769,7 @@ namespace Lexer
 						!details::is_digit(c)
 						)
 					{
-						t.set_error(e_err_number, begin, s_itr_, base_itr_);
+						t.set_error(TOKEN_ERR_NUMBER, begin, s_itr_, base_itr_);
 						token_list_.push_back(t);
 						return;
 					}
@@ -782,7 +782,7 @@ namespace Lexer
 				{
 					if (post_e_sign_found)
 					{
-						t.set_error(e_err_number, begin, s_itr_, base_itr_);
+						t.set_error(TOKEN_ERR_NUMBER, begin, s_itr_, base_itr_);
 						token_list_.push_back(t);
 						return;
 					}
@@ -815,7 +815,7 @@ namespace Lexer
 			token_t t;
 			if (std::distance(s_itr_, s_end_) < 2)
 			{
-				t.set_error(e_err_string, s_itr_, s_end_, base_itr_);
+				t.set_error(TOKEN_ERR_STRING, s_itr_, s_end_, base_itr_);
 				token_list_.push_back(t);
 				return;
 			}
@@ -845,7 +845,7 @@ namespace Lexer
 
 			if (is_end(s_itr_))
 			{
-				t.set_error(e_err_string, begin, s_itr_, base_itr_);
+				t.set_error(TOKEN_ERR_STRING, begin, s_itr_, base_itr_);
 				token_list_.push_back(t);
 				return;
 			}
@@ -871,7 +871,7 @@ namespace Lexer
 			token_t t;
 			if (std::distance(s_itr_, s_end_) < 2)
 			{
-				t.set_error(e_err_char, s_itr_, s_end_, base_itr_);
+				t.set_error(TOKEN_ERR_CHAR, s_itr_, s_end_, base_itr_);
 				token_list_.push_back(t);
 				return;
 			}
@@ -906,7 +906,7 @@ namespace Lexer
 
 			if (is_end(s_itr_))
 			{
-				t.set_error(e_err_char, begin, s_itr_, base_itr_);
+				t.set_error(TOKEN_ERR_CHAR, begin, s_itr_, base_itr_);
 				token_list_.push_back(t);
 				return;
 			}
@@ -1205,12 +1205,12 @@ namespace Lexer
 
 			inline int insert(const Lexer::token& t0, const Lexer::token& t1, Lexer::token& new_token)
 			{
-				new_token.type = e_mul;
+				new_token.type = TOKEN_MUL;
 				new_token.value = "*";
 				new_token.position = t1.position;
 				bool match = false;
 
-				if (t0.type == e_symbol)
+				if (t0.type == TOKEN_SYMBOL)
 				{
 					if (ignore_set_.end() != ignore_set_.find(t0.value))
 					{
@@ -1222,7 +1222,7 @@ namespace Lexer
 					}
 				}
 
-				if (t1.type == e_symbol)
+				if (t1.type == TOKEN_SYMBOL)
 				{
 					if (ignore_set_.end() != ignore_set_.find(t1.value))
 					{
@@ -1230,17 +1230,17 @@ namespace Lexer
 					}
 				}
 
-				if ((t0.type == e_number) && (t1.type == e_symbol)) match = true;
-				else if ((t0.type == e_number) && (t1.type == e_lbracket)) match = true;
-				else if ((t0.type == e_number) && (t1.type == e_lcrlbracket)) match = true;
-				else if ((t0.type == e_number) && (t1.type == e_lsqrbracket)) match = true;
-				else if ((t0.type == e_symbol) && (t1.type == e_number)) match = true;
-				else if ((t0.type == e_rbracket) && (t1.type == e_number)) match = true;
-				else if ((t0.type == e_rcrlbracket) && (t1.type == e_number)) match = true;
-				else if ((t0.type == e_rsqrbracket) && (t1.type == e_number)) match = true;
-				else if ((t0.type == e_rbracket) && (t1.type == e_symbol)) match = true;
-				else if ((t0.type == e_rcrlbracket) && (t1.type == e_symbol)) match = true;
-				else if ((t0.type == e_rsqrbracket) && (t1.type == e_symbol)) match = true;
+				if ((t0.type == TOKEN_NUMBER) && (t1.type == TOKEN_SYMBOL)) match = true;
+				else if ((t0.type == TOKEN_NUMBER) && (t1.type == TOKEN_LBRACKET)) match = true;
+				else if ((t0.type == TOKEN_NUMBER) && (t1.type == TOKEN_LCRLBRACKET)) match = true;
+				else if ((t0.type == TOKEN_NUMBER) && (t1.type == TOKEN_LSQRBRACKET)) match = true;
+				else if ((t0.type == TOKEN_SYMBOL) && (t1.type == TOKEN_NUMBER)) match = true;
+				else if ((t0.type == TOKEN_RBRACKET) && (t1.type == TOKEN_NUMBER)) match = true;
+				else if ((t0.type == TOKEN_RCRLBRACKET) && (t1.type == TOKEN_NUMBER)) match = true;
+				else if ((t0.type == TOKEN_RSQRBRACKET) && (t1.type == TOKEN_NUMBER)) match = true;
+				else if ((t0.type == TOKEN_RBRACKET) && (t1.type == TOKEN_SYMBOL)) match = true;
+				else if ((t0.type == TOKEN_RCRLBRACKET) && (t1.type == TOKEN_SYMBOL)) match = true;
+				else if ((t0.type == TOKEN_RSQRBRACKET) && (t1.type == TOKEN_SYMBOL)) match = true;
 
 				return (match) ? 1 : -1;
 			}
@@ -1257,49 +1257,49 @@ namespace Lexer
 			inline bool join(const Lexer::token& t0, const Lexer::token& t1, Lexer::token& t)
 			{
 				//': =' --> ':='
-				if ((t0.type == e_colon) && (t1.type == e_eq))
+				if ((t0.type == TOKEN_COLON) && (t1.type == TOKEN_EQ))
 				{
-					t.type = e_assign;
+					t.type = TOKEN_ASSIGN;
 					t.value = ":=";
 					t.position = t0.position;
 					return true;
 				}
 				//'> =' --> '>='
-				else if ((t0.type == e_gt) && (t1.type == e_eq))
+				else if ((t0.type == TOKEN_GT) && (t1.type == TOKEN_EQ))
 				{
-					t.type = e_gte;
+					t.type = TOKEN_GTE;
 					t.value = ">=";
 					t.position = t0.position;
 					return true;
 				}
 				//'< =' --> '<='
-				else if ((t0.type == e_lt) && (t1.type == e_eq))
+				else if ((t0.type == TOKEN_LT) && (t1.type == TOKEN_EQ))
 				{
-					t.type = e_lte;
+					t.type = TOKEN_LTE;
 					t.value = "<=";
 					t.position = t0.position;
 					return true;
 				}
 				//'= =' --> '=='
-				else if ((t0.type == e_eq) && (t1.type == e_eq))
+				else if ((t0.type == TOKEN_EQ) && (t1.type == TOKEN_EQ))
 				{
-					t.type = e_eq;
+					t.type = TOKEN_EQ;
 					t.value = "==";
 					t.position = t0.position;
 					return true;
 				}
 				//'! =' --> '!='
-				else if ((static_cast<char>(t0.type) == '!') && (t1.type == e_eq))
+				else if ((static_cast<char>(t0.type) == '!') && (t1.type == TOKEN_EQ))
 				{
-					t.type = e_ne;
+					t.type = TOKEN_NE;
 					t.value = "!=";
 					t.position = t0.position;
 					return true;
 				}
 				//'< >' --> '<>'
-				else if ((t0.type == e_lt) && (t1.type == e_gt))
+				else if ((t0.type == TOKEN_LT) && (t1.type == TOKEN_GT))
 				{
-					t.type = e_ne;
+					t.type = TOKEN_NE;
 					t.value = "<>";
 					t.position = t0.position;
 					return true;
@@ -1339,16 +1339,16 @@ namespace Lexer
 			bool operator()(const Lexer::token& t)
 			{
 				if (!t.value.empty() &&
-					(e_string != t.type) &&
-					(e_symbol != t.type) &&
+					(TOKEN_STRING != t.type) &&
+					(TOKEN_SYMBOL != t.type) &&
 					details::is_bracket(t.value[0])
 					)
 				{
 					char c = t.value[0];
 
-					if (t.type == e_lbracket)    stack_.push(')');
-					else if (t.type == e_lcrlbracket) stack_.push('}');
-					else if (t.type == e_lsqrbracket) stack_.push(']');
+					if (t.type == TOKEN_LBRACKET)    stack_.push(')');
+					else if (t.type == TOKEN_LCRLBRACKET) stack_.push('}');
+					else if (t.type == TOKEN_LSQRBRACKET) stack_.push(']');
 					else if (details::is_right_bracket(c))
 					{
 						if (stack_.empty())
@@ -1400,7 +1400,7 @@ namespace Lexer
 
 			bool add_replace(const std::string& target_symbol,
 				const std::string& replace_symbol,
-				const TokenType token_type = e_symbol)
+				const TokenType token_type = TOKEN_SYMBOL)
 			{
 				replace_map_t::iterator itr = replace_map_.find(target_symbol);
 
@@ -1423,7 +1423,7 @@ namespace Lexer
 
 			bool modify(Lexer::token& t)
 			{
-				if (e_symbol == t.type)
+				if (TOKEN_SYMBOL == t.type)
 				{
 					if (replace_map_.empty())
 						return false;
@@ -1456,29 +1456,29 @@ namespace Lexer
 			sequence_validator()
 				: Lexer::token_scanner(2)
 			{
-				add_invalid(e_number, e_number);
-				add_invalid(e_string, e_string);
-				add_invalid(e_number, e_string);
-				add_invalid(e_string, e_number);
-				add_invalid(e_string, e_colon);
-				add_invalid(e_colon, e_string);
-				add_invalid_set1(e_assign);
-				add_invalid_set1(e_shr);
-				add_invalid_set1(e_shl);
-				add_invalid_set1(e_lte);
-				add_invalid_set1(e_ne);
-				add_invalid_set1(e_gte);
-				add_invalid_set1(e_lt);
-				add_invalid_set1(e_gt);
-				add_invalid_set1(e_eq);
-				add_invalid_set1(e_comma);
-				add_invalid_set1(e_add);
-				add_invalid_set1(e_sub);
-				add_invalid_set1(e_div);
-				add_invalid_set1(e_mul);
-				add_invalid_set1(e_mod);
-				add_invalid_set1(e_pow);
-				add_invalid_set1(e_colon);
+				add_invalid(TOKEN_NUMBER, TOKEN_NUMBER);
+				add_invalid(TOKEN_STRING, TOKEN_STRING);
+				add_invalid(TOKEN_NUMBER, TOKEN_STRING);
+				add_invalid(TOKEN_STRING, TOKEN_NUMBER);
+				add_invalid(TOKEN_STRING, TOKEN_COLON);
+				add_invalid(TOKEN_COLON, TOKEN_STRING);
+				add_invalid_set1(TOKEN_ASSIGN);
+				add_invalid_set1(TOKEN_SHR);
+				add_invalid_set1(TOKEN_SHL);
+				add_invalid_set1(TOKEN_LTE);
+				add_invalid_set1(TOKEN_NE);
+				add_invalid_set1(TOKEN_GTE);
+				add_invalid_set1(TOKEN_LT);
+				add_invalid_set1(TOKEN_GT);
+				add_invalid_set1(TOKEN_EQ);
+				add_invalid_set1(TOKEN_COMMA);
+				add_invalid_set1(TOKEN_ADD);
+				add_invalid_set1(TOKEN_SUB);
+				add_invalid_set1(TOKEN_DIV);
+				add_invalid_set1(TOKEN_MUL);
+				add_invalid_set1(TOKEN_MOD);
+				add_invalid_set1(TOKEN_POW);
+				add_invalid_set1(TOKEN_COLON);
 			}
 
 			bool result()
@@ -1532,21 +1532,21 @@ namespace Lexer
 
 			void add_invalid_set1(TokenType t)
 			{
-				add_invalid(t, e_assign);
-				add_invalid(t, e_shr);
-				add_invalid(t, e_shl);
-				add_invalid(t, e_lte);
-				add_invalid(t, e_ne);
-				add_invalid(t, e_gte);
-				add_invalid(t, e_lt);
-				add_invalid(t, e_gt);
-				add_invalid(t, e_eq);
-				add_invalid(t, e_comma);
-				add_invalid(t, e_div);
-				add_invalid(t, e_mul);
-				add_invalid(t, e_mod);
-				add_invalid(t, e_pow);
-				add_invalid(t, e_colon);
+				add_invalid(t, TOKEN_ASSIGN);
+				add_invalid(t, TOKEN_SHR);
+				add_invalid(t, TOKEN_SHR);
+				add_invalid(t, TOKEN_LTE);
+				add_invalid(t, TOKEN_NE);
+				add_invalid(t, TOKEN_GTE);
+				add_invalid(t, TOKEN_LT);
+				add_invalid(t, TOKEN_GT);
+				add_invalid(t, TOKEN_EQ);
+				add_invalid(t, TOKEN_COMMA);
+				add_invalid(t, TOKEN_DIV);
+				add_invalid(t, TOKEN_MUL);
+				add_invalid(t, TOKEN_MOD);
+				add_invalid(t, TOKEN_POW);
+				add_invalid(t, TOKEN_COLON);
 			}
 
 			bool invalid_bracket_check(TokenType base, TokenType t)
@@ -1555,8 +1555,8 @@ namespace Lexer
 				{
 					switch (t)
 					{
-					case e_string: return true;
-					case e_assign: return true;
+					case TOKEN_STRING: return true;
+					case TOKEN_ASSIGN: return true;
 					default: return false;
 					}
 				}
@@ -1570,12 +1570,12 @@ namespace Lexer
 					{
 						switch (t)
 						{
-						case e_number: return false;
-						case e_symbol: return false;
-						case e_string: return false;
-						case e_add: return false;
-						case e_sub: return false;
-						case e_colon: return false;
+						case TOKEN_NUMBER: return false;
+						case TOKEN_SYMBOL: return false;
+						case TOKEN_STRING: return false;
+						case TOKEN_ADD: return false;
+						case TOKEN_SUB: return false;
+						case TOKEN_COLON: return false;
 						default: return true;
 						}
 					}
@@ -1584,11 +1584,11 @@ namespace Lexer
 				{
 					switch (base)
 					{
-					case e_number: return false;
-					case e_symbol: return false;
-					case e_string: return false;
-					case e_eof: return false;
-					case e_colon: return false;
+					case TOKEN_NUMBER: return false;
+					case TOKEN_SYMBOL: return false;
+					case TOKEN_STRING: return false;
+					case TOKEN_EOF: return false;
+					case TOKEN_COLON: return false;
 					default: return true;
 					}
 				}
@@ -1596,9 +1596,9 @@ namespace Lexer
 				{
 					switch (base)
 					{
-					case e_rbracket: return true;
-					case e_rsqrbracket: return true;
-					case e_rcrlbracket: return true;
+					case TOKEN_RBRACKET: return true;
+					case TOKEN_RSQRBRACKET: return true;
+					case TOKEN_RCRLBRACKET: return true;
 					default: return false;
 					}
 				}

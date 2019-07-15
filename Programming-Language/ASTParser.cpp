@@ -14,8 +14,10 @@ void ASTParser::Generator(Lexer::Generator& Generator) {
 
 		Lexer::token t = Generator[i];
 		std::string type = t.to_str(t.type).c_str();
-		if (t.type == e_number)
+		if (t.type == TOKEN_NUMBER)
 			sASTParser->m_operatorQueue.push_back(t.value);
+
+		
 
 		printf("Token is %s and value is %s \n", t.to_str(t.type).c_str(), t.value.c_str());
 
