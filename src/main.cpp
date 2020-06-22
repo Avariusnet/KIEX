@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 	{
 		// Open our file, make sure there is no errors.
 		FILE* fileStream;
-		if (fopen_s(&fileStream, argv[i], "R") != NULL)
+		if (fopen_s(&fileStream, argv[i], "r") != NULL)
 		{
 			printf_s("Unable to open file %s, ensure it exists.\n", argv[i]);
 			std::getchar();

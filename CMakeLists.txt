@@ -19,7 +19,7 @@ include(BuildInfoAutomation)
 set(PROJECT_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/src")
 
 # Specify output directories
-set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR_DIR}/bin")
+set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 
 # Collect all our source files
 CollectSourceFiles( "${CMAKE_SOURCE_DIR}/src" SOURCE )
