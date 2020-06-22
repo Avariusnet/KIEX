@@ -1,4 +1,5 @@
 # KIEX Programming Language
+KIEX is a simple programing language that was designed as an experiment, and to be used as a learning experience.
 
 ## Useful literature
 

@@ -240,9 +240,6 @@ namespace Lexer
 
 	struct token
 	{
-
-	
-
 		token()
 			: type(TOKEN_NONE),
 			value(""),
